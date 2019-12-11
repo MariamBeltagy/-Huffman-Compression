@@ -1,5 +1,5 @@
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.PrintWriter; 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
@@ -48,34 +48,48 @@ public class Huffman {
 
 		//**traverse the tree and store the Huffman codes in a map**//
 		Map<Character, String> huffmanCode = new HashMap<>();
-		encode(root, "", huffmanCode);
+		encode(root, "", huffmanCode);	//create the codes for each character
 
-		//**print the codes for each character**//
+		
+		String fileHeader = "";
 		System.out.println("Huffman Codes:\n");
+		
 		for (Map.Entry<Character, String> entry : huffmanCode.entrySet()) 
 		{
+			//**print the codes for each character**//
 			System.out.println(entry.getKey() + " " + entry.getValue());
-		}
- 
+			
+			/*Create the file header consisting of the binary representation
+			of each character and their huffman codes separated by spaces*/
+			fileHeader = fileHeader + Integer.toBinaryString(entry.getKey()) + " " + entry.getValue() + " ";
+		} 
+		System.out.println("File Header: " + fileHeader);
 		System.out.println("\nOriginal string:\n" + text);
-
+		 
 		//**print encoded string**//
 		StringBuilder sb = new StringBuilder();
+		sb.append(fileHeader + "\n");	//copy the file header and encoded string to string
+		
 		for (int i = 0 ; i < text.length(); i++) 
-		{
-			sb.append(huffmanCode.get(text.charAt(i)));
+		{ 
+			sb.append(huffmanCode.get(text.charAt(i))); 
 		}
 		 
 		System.out.println("\nEncoded string:\n" + sb);
 		try (PrintWriter out = new PrintWriter("Encoded_File.txt")) //write encoded string to file
 		{
 		    out.println(sb);
+		    out.close();
 		}
-		int index = -1;
-		System.out.println("\nDecoded string: \n");
-		while (index < sb.length() - 2) {
-			index = decode(root, index, sb);
-		}
+	}
+	public static void decompressFile(String text)
+	{
+		//int index = -1;
+		//System.out.println("\nDecoded string: \n");
+		//while (index < sb.length() - 2) 
+		//{
+		//	index = decode(root, index, sb);
+		//}
 	}
 	
 	//**Method to encode the given input and store codes in a map**//
@@ -102,7 +116,8 @@ public class Huffman {
 		//**if it is a leaf node**//
 		if (root.left == null && root.right == null)
 		{
-			System.out.print(root.c);
+			System.out.print(root.c);	//print each decoded character
+			
 			return index;
 		}
 	
