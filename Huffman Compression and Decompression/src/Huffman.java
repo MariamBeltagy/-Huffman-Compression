@@ -33,7 +33,7 @@ public class Huffman {
 			q.add(new Node(entry.getKey(), entry.getValue()));
 		}
 
-		while (q.size() > 1)
+		while (q.size() > 1) 
 		{
 			//**remove the two nodes of lowest frequency from the queue**//
 			Node left = q.poll();
@@ -52,46 +52,91 @@ public class Huffman {
 
 		
 		String fileHeader = "";
-		System.out.println("Huffman Codes:\n");
+		System.out.println("Char\tCode\t\tNew Code\n");
+		String binCode;
 		
 		for (Map.Entry<Character, String> entry : huffmanCode.entrySet()) 
 		{
 			//**print the codes for each character**//
-			System.out.println(entry.getKey() + " " + entry.getValue());
-			
+			binCode = String.format("%08d",Integer.parseInt(Integer.toBinaryString(entry.getKey()))); //the binary code for each character
+			System.out.println(entry.getKey() + "\t" + binCode + "\t" + entry.getValue());
+			 
 			/*Create the file header consisting of the binary representation
 			of each character and their huffman codes separated by spaces*/
-			fileHeader = fileHeader + Integer.toBinaryString(entry.getKey()) + " " + entry.getValue() + " ";
-		} 
+			fileHeader = fileHeader + binCode + " " + entry.getValue() + " ";
+		}   
 		System.out.println("File Header: " + fileHeader);
 		System.out.println("\nOriginal string:\n" + text);
 		 
-		//**print encoded string**//
-		StringBuilder sb = new StringBuilder();
-		sb.append(fileHeader + "\n");	//copy the file header and encoded string to string
-		
-		for (int i = 0 ; i < text.length(); i++) 
-		{ 
-			sb.append(huffmanCode.get(text.charAt(i))); 
-		}
+		StringBuilder encoded = new StringBuilder();
+		encoded.append(fileHeader + "\n");	//copy the file header and encoded string to string
 		 
-		System.out.println("\nEncoded string:\n" + sb);
-		try (PrintWriter out = new PrintWriter("Encoded_File.txt")) //write encoded string to file
+		for (int i = 0 ; i < text.length(); i++) 
+		{  
+			encoded.append(huffmanCode.get(text.charAt(i))); 
+		}
+		  
+		System.out.println("\nEncoded file:\n" + encoded);
+		try (PrintWriter out = new PrintWriter("Encoded.txt")) //write encoded string to file
 		{
-		    out.println(sb);
+		    out.println(encoded);
 		    out.close();
 		}
 	}
-	public static void decompressFile(String text)
+	public static void decode(String text) throws FileNotFoundException
 	{
-		//int index = -1;
-		//System.out.println("\nDecoded string: \n");
-		//while (index < sb.length() - 2) 
-		//{
-		//	index = decode(root, index, sb);
-		//}
-	}
-	
+		Map<String, Character> huffmanDecode = new HashMap<>();
+		//split the file into File Header and Encoded String
+		String delim = "[\n]";
+		String[] tokens = text.split(delim);
+		
+		String header = tokens[0];
+		String encodedString = tokens[1];
+		System.out.println("\nHeader: " + header + "\nEncoded String: " + encodedString);
+		
+		
+		//split the file header by the spaces to get codes for each character
+		String delim2 = "[ ]";
+		String[] headerSplit = header.split(delim2); 
+		int parseInt;
+		char c;
+		
+		System.out.println("Char\tCode\n"); //Print each character and its code
+		for(int i = 0; i<headerSplit.length; i=i+2)
+		{
+			parseInt = Integer.parseInt(headerSplit[i], 2); //Convert from binary string to character
+			c = (char)parseInt; 
+			System.out.println(c + "\t" + headerSplit[i+1]);
+			
+			huffmanDecode.put(headerSplit[i+1], c);         //insert character and its code into map
+		}
+		StringBuilder temp = new StringBuilder();
+		StringBuilder decoded = new StringBuilder();
+		
+		/*append each bit by bit in the encoded string, 
+		 * if the code is in the map: retrieve its corresponding character from the map 
+		 * (the first match is the right match)
+		 * and clear the temporary string
+		 * else, append the next bit
+		 */
+		for (int i = 0 ; i < encodedString.length(); i++) 
+		{  
+			temp.append(encodedString.charAt(i)); 
+			//System.out.println("\nTemp String: " + temp); 
+			if(huffmanDecode.containsKey(temp.toString())) 
+			{    
+				decoded.append(huffmanDecode.get(temp.toString()));  //append the retrieved character from map
+				temp.delete(0, temp.length()); //clear string
+			}
+		}
+		System.out.println("\nDecoded string:\n" + decoded);	
+		try (PrintWriter out = new PrintWriter("Decoded.txt")) //write encoded string to file
+		{
+		    out.println(decoded);
+		    out.close();
+		}
+	} 
+	 
 	//**Method to encode the given input and store codes in a map**//
 	public static void encode(Node root, String str, Map<Character, String> huffmanCode)
 	{
@@ -99,7 +144,7 @@ public class Huffman {
 			return;
 		
 		if (root.left == null && root.right == null) //if node is a leaf 
-		{ 
+		{  
 			huffmanCode.put(root.c, str);
 		}
 	
@@ -107,28 +152,5 @@ public class Huffman {
 		encode(root.right, str + "1", huffmanCode);
 	}
 	
-	//**method to decode the encoded string**//
-	public static int decode(Node root, int index, StringBuilder sb)
-	{
-		if (root == null)
-			return index;
-	
-		//**if it is a leaf node**//
-		if (root.left == null && root.right == null)
-		{
-			System.out.print(root.c);	//print each decoded character
-			
-			return index;
-		}
-	
-		index++;
-	
-		if (sb.charAt(index) == '0')
-			index = decode(root.left, index, sb);
-		else
-			index = decode(root.right, index, sb);
-	
-		return index;
-	}
 
 }
