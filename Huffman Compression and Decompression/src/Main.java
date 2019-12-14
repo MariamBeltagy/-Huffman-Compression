@@ -7,8 +7,8 @@ class Main
 	{
 		Scanner input = new Scanner(System.in);
     	
-    	System.out.print("Encode a File-->  (Press 1)\n"
-    			+ "Decode a File-->  (Press 2)\n");
+    	System.out.print("Compress a File   -->  (Press 1)\n"
+    			+ "Decompress a File -->  (Press 2)\n");
     	
     	int number = input.nextInt();
     	
@@ -16,22 +16,37 @@ class Main
     	String myString = input.next();
 
     	input.close();
-		switch(number) 
+		switch(number)  
 		{  
 			case 1:
-			{
+			{ 
 				String text = ReadFile.readFile(".\\"+ myString+".txt"); //Read from file as a string
-				Huffman.buildHuffmanTree(text);
+				 
+				GetCode.getCode(text);
+				long startTime = System.nanoTime();  //start time of compression
+				StringBuilder encoded = Huffman.buildHuffmanTree(text);
+				long elapsedTime = System.nanoTime() - startTime; 
+
+				System.out.println("\nCompression Ratio = " + ((text.length()*8)*1.0/encoded.length()) );
+				
+		        System.out.println("\nTotal execution time of compression: "
+		                + elapsedTime/1000000 + " milliseconds");
 				break;
 			}
-			case 2:   
+			case 2:    
 			{
 				String text = ReadFile.readFile(".\\"+ myString+".txt"); //Read from file as a string
+				
+				long startTime = System.nanoTime();  //start time of decompression
 				Huffman.decode(text);;
+				long elapsedTime = System.nanoTime() - startTime; 
+			     
+		        System.out.println("\nTotal execution time of compression: "
+		                + elapsedTime/1000000 + " milliseconds");
 				break;
 			}  
-			default:
+			default: 
 				System.out.println("Wrong input :(");
-		}
+		} 
 	}
 } 

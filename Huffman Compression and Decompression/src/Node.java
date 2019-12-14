@@ -9,7 +9,7 @@ public class Node //Each node in the tree
 	{
 		this.c = c;
 		this.freq = freq;
-	}
+	}  
 
 	public Node(char c, int freq, Node left, Node right) {
 		this.c = c;
