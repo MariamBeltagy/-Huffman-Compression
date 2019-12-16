@@ -11,42 +11,44 @@ class Main
     			+ "Decompress a File -->  (Press 2)\n");
     	
     	int number = input.nextInt();
-    	
-    	System.out.println("Please enter file name: ");	
-    	String myString = input.next();
-
-    	input.close();
+    
 		switch(number)  
 		{  
 			case 1:
 			{ 
-				String text = ReadFile.readFile(".\\"+ myString+".txt"); //Read from file as a string
+				System.out.println("Please enter file name: ");	
+		    	String myString = input.next();
+				
+				String text = ReadFile.readFile(".\\"+ myString); //Read from file as a string
 				 
-				GetCode.getCode(text);
+				//GetCode.getCode(text);
 				long startTime = System.nanoTime();  //start time of compression
-				StringBuilder encoded = Huffman.buildHuffmanTree(text);
+				StringBuilder encoded = Huffman.buildHuffmanTree(text); 
 				long elapsedTime = System.nanoTime() - startTime; 
 
 				System.out.println("\nCompression Ratio = " + ((text.length()*8)*1.0/encoded.length()) );
-				
-		        System.out.println("\nTotal execution time of compression: "
+				 
+		        System.out.println("\nTotal execution time of compression: " 
 		                + elapsedTime/1000000 + " milliseconds");
 				break;
 			}
 			case 2:    
-			{
-				String text = ReadFile.readFile(".\\"+ myString+".txt"); //Read from file as a string
-				
+			{    
+				System.out.println("Please enter file name: ");	
+		    	String fileName = input.next();
+		    	
 				long startTime = System.nanoTime();  //start time of decompression
-				Huffman.decode(text);;
+				Decompression.decompress(fileName); 
 				long elapsedTime = System.nanoTime() - startTime; 
 			     
 		        System.out.println("\nTotal execution time of compression: "
-		                + elapsedTime/1000000 + " milliseconds");
-				break;
-			}  
-			default: 
+		                + elapsedTime/1000000 + " milliseconds"); 
+				break; 
+			}   
+			default:   
 				System.out.println("Wrong input :(");
+ 
+		    input.close();
 		} 
 	}
 } 
