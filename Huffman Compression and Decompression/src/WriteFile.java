@@ -1,4 +1,6 @@
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.BitSet;
 
 public class WriteFile {
@@ -13,7 +15,7 @@ public class WriteFile {
 				if (encoded.charAt(i) == '1') {
 					buffer.set(i);					
 				} else {
-					buffer.clear(i);					
+					buffer.clear(i);		
 				}
 			}
 			fos.write(buffer.toByteArray());
@@ -22,4 +24,4 @@ public class WriteFile {
 			e.printStackTrace();
 		}
 	}
-}
+} 

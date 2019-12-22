@@ -5,8 +5,7 @@ public class Node //Each node in the tree
 	int freq;
 	Node left = null, right = null;
 
-	Node(char c, int freq)
-	{
+	Node(char c, int freq) {
 		this.c = c;
 		this.freq = freq;
 	}  
